@@ -1,9 +1,16 @@
+import argparse
 import random
 
 import streamlit as st
 import torch
 from diffusers import StableDiffusionPipeline
 from torch import autocast
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--device", help="device for inference in torch notation (cpu, cuda)", default="cpu")
+
+args = parser.parse_args()
+print(f"Using {args.device} device for inference")
 
 # Fix for local running
 seedValue=random.randint(0,4294967295)
@@ -14,7 +21,7 @@ def load():
     pipe = StableDiffusionPipeline.from_pretrained(
         'hakurei/waifu-diffusion',
         torch_dtype=torch.float16 # Fix for stable work
-    ).to('cuda')
+    ).to(args.device)
     return pipe
 
 
@@ -31,8 +38,7 @@ result = st.button('Сгенерировать изображение!')
 
 
 if result:
-    with autocast("cuda"):
-        image = model([prompt] * 2, guidance_scale=2)['images']
+    with autocast(args.device):
+        image = model([prompt], guidance_scale=6)['images']
     st.write('**Результаты распознавания:**')
-    st.image(image[0], caption='Результат №1')
-    st.image(image[1], caption='Результат №2')
+    st.image(image[0], caption='Результат')

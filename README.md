@@ -9,3 +9,14 @@
 Для теста модели использовать `python test_model.py`
 
 Для запуска сервера: `streamlit run main_server.py`
+
+## Update
+
+* Подобраны параметры пайплайна для более качественной генерации
+* Добавлена возможность использования разных устройств для инференсов
+
+Теперь можно выбрать устройство при запуске Streamlit (по умолчанию CPU, нотация torch -> {`cpu`, `cuda`}):
+
+`streamlit run main_server.py -- --device cuda`
+
+`python test_model.py --device cuda`
