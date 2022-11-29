@@ -21,14 +21,18 @@ if "cuda" in args.device:
 seedValue=random.randint(0,4294967295)
 torch.manual_seed(seedValue)
 
+if args.device == "cpu":
+    dtype = torch.float
+else:
+    dtype = torch.float16
+
 pipe = StableDiffusionPipeline.from_pretrained(
     'hakurei/waifu-diffusion',
-    torch_dtype=torch.float16 # Fix for stable work
+    torch_dtype=dtype # Fix for stable work
 ).to(args.device)
 
-with autocast(args.device):
-    image = pipe(["Natasha"], guidance_scale=6)
-    print(image.keys())
-    print(image['nsfw_content_detected'])
-    image = image['images'][0]
+image = pipe(["Natasha"], guidance_scale=6)
+print(image.keys())
+print(image['nsfw_content_detected'])
+image = image['images'][0]
 image.save("test.png")
